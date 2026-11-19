@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --primary-forest: #0c3627;
+  --primary-forest-hover: #08271c;
+  --accent-gold: #d4a373;
+  --bg-cream: #faf7f2;
+  --card-border: #ede8e1;
+  --text-dark: #1a221e;
+  --text-muted: #64746d;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', 'Noto Sans Ethiopic', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-cream);
+  color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ethiopic Typography Enhancements */
+[lang="am"] {
+  font-family: 'Noto Sans Ethiopic', 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: 0.01em;
+}
+
+/* Custom Scrollbars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Badge Styles */
+.badge-spicy {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+.badge-gluten {
+  background-color: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+.badge-fasting {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+.badge-dairy {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+.badge-popular {
+  background-color: #fef9c3;
+  color: #a16207;
+  border: 1px solid #fef08a;
+}
+.badge-eggs {
+  background-color: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fde68a;
+}
+
+/* Mobile Container Simulation */
+.mobile-frame-container {
+  max-width: 440px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: #ffffff;
+  position: relative;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 640px) {
+  .mobile-frame-container {
+    max-width: 100%;
+    box-shadow: none;
+  }
+}
+
+/* Animations */
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scaleUp {
+  animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Tap Highlight */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================
+   ORIVEX TECH SIGNATURE GREEN FOOTAGE
+   ========================================== */
+.orivex-green-badge {
+  background: linear-gradient(135deg, #0c3627 0%, #15573e 100%);
+  border: 1px solid #1e7253;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(12, 54, 39, 0.25);
+  transition: all 0.2s ease-in-out;
+}
+
+.orivex-green-badge:hover {
+  background: linear-gradient(135deg, #0f402f 0%, #1a6b4d 100%);
+  border-color: #268d66;
+  box-shadow: 0 6px 16px rgba(12, 54, 39, 0.35);
+}
+
+.orivex-green-banner {
+  background-color: #0c3627;
+  color: #ffffff;
+  border-top: 1px solid #134e38;
+}
+
+

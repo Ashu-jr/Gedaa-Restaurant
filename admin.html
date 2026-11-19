@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gedaa Restaurant — Secure Admin Portal</title>
+  
+  <!-- Favicon with Oromo Gedaa Symbol -->
+  <link rel="icon" type="image/svg+xml" href="gedaa_logo.svg">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: {
+              DEFAULT: '#0c3627',
+              light: '#134e38',
+              dark: '#08251a',
+              subtle: '#eaf4ee'
+            },
+            cream: {
+              DEFAULT: '#faf7f2',
+              card: '#ffffff',
+              border: '#ede8e1'
+            },
+            gold: '#d4a373'
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-stone-100 min-h-screen text-stone-900 selection:bg-emerald-200 flex flex-col md:flex-row">
+
+  <!-- ========================================================= -->
+  <!-- SIDEBAR NAVIGATION -->
+  <!-- ========================================================= -->
+  <aside class="w-full md:w-64 bg-forest-dark text-white flex-shrink-0 flex flex-col justify-between border-r border-emerald-950/60 shadow-xl min-h-screen">
+    <div>
+      <!-- Brand & Header with Oromo Gadaa Logo -->
+      <div class="p-5 border-b border-emerald-900/60 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl overflow-hidden bg-white p-0.5 border-2 border-amber-400 shadow-md flex-shrink-0">
+            <img src="gedaa_logo.svg" alt="Oromo Gadaa Symbol" class="w-full h-full object-contain">
+          </div>
+          <div>
+            <h1 class="font-black text-sm leading-tight text-white tracking-wide">Gedaa Admin</h1>
+            <p class="text-[11px] text-emerald-400 font-semibold">Gedaa Restaurant</p>
+          </div>
+        </div>
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" title="System Online & Protected"></span>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="p-3 space-y-1.5 text-xs font-bold">
+        <button onclick="setAdminTab('dashboard')" id="nav-dashboard" 
+          class="w-full flex items-center justify-between px-3.5 py-3 rounded-xl transition-colors text-emerald-100/70 hover:bg-forest hover:text-white">
+          <div class="flex items-center gap-3">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 text-emerald-300"></i>
+            <span>Overview & Stats</span>
+          </div>
+        </button>
+
+        <button onclick="setAdminTab('menu_manager')" id="nav-menu_manager" 
+          class="w-full flex items-center justify-between px-3.5 py-3 rounded-xl transition-colors bg-emerald-800 text-white shadow-sm font-bold text-xs">
+          <div class="flex items-center gap-3">
+            <i data-lucide="utensils" class="w-4 h-4 text-emerald-300"></i>
+            <span>Menu & Food Editor</span>
+          </div>
+          <span id="badge-dishes-count" class="bg-forest-light text-emerald-200 text-[10px] px-2 py-0.5 rounded-full">0</span>
+        </button>
+
+        <button onclick="setAdminTab('take_order')" id="nav-take_order" 
+          class="w-full flex items-center justify-between px-3.5 py-3 rounded-xl transition-colors text-emerald-100/70 hover:bg-forest hover:text-white">
+          <div class="flex items-center gap-3">
+            <i data-lucide="clipboard-pen" class="w-4 h-4 text-emerald-300"></i>
+            <span>Take Order (POS)</span>
+          </div>
+          <span class="bg-amber-400 text-stone-900 text-[9px] font-black px-1.5 py-0.5 rounded-full">POS</span>
+        </button>
+
+        <button onclick="setAdminTab('kitchen')" id="nav-kitchen" 
+          class="w-full flex items-center justify-between px-3.5 py-3 rounded-xl transition-colors text-emerald-100/70 hover:bg-forest hover:text-white">
+          <div class="flex items-center gap-3">
+            <i data-lucide="chef-hat" class="w-4 h-4 text-emerald-300"></i>
+            <span>Kitchen Display (KDS)</span>
+          </div>
+          <span id="badge-active-orders" class="bg-emerald-500 text-stone-900 text-[10px] px-2 py-0.5 rounded-full font-black">0</span>
+        </button>
+
+        <button onclick="setAdminTab('orders_list')" id="nav-orders_list" 
+          class="w-full flex items-center justify-between px-3.5 py-3 rounded-xl transition-colors text-emerald-100/70 hover:bg-forest hover:text-white">
+          <div class="flex items-center gap-3">
+            <i data-lucide="list-ordered" class="w-4 h-4 text-emerald-300"></i>
+            <span>All Orders Log</span>
+          </div>
+        </button>
+
+        <button onclick="setAdminTab('waiter_calls')" id="nav-waiter_calls" 
+          class="w-full flex items-center justify-between px-3.5 py-3 rounded-xl transition-colors text-emerald-100/70 hover:bg-forest hover:text-white">
+          <div class="flex items-center gap-3">
+            <i data-lucide="bell-ring" class="w-4 h-4 text-emerald-300"></i>
+            <span>Waiter Calls</span>
+          </div>
+          <span id="badge-waiter-calls" class="bg-rose-500 text-white text-[10px] px-2 py-0.5 rounded-full hidden">0</span>
+        </button>
+
+        <button onclick="setAdminTab('qr_codes')" id="nav-qr_codes" 
+          class="w-full flex items-center justify-between px-3.5 py-3 rounded-xl transition-colors text-emerald-100/70 hover:bg-forest hover:text-white">
+          <div class="flex items-center gap-3">
+            <i data-lucide="qr-code" class="w-4 h-4 text-emerald-300"></i>
+            <span>Table QR Badges</span>
+          </div>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Bottom Actions / Quick Customer Menu Link & Logout -->
+    <div class="p-4 border-t border-emerald-900/60 space-y-2">
+      <a href="/" target="_blank" 
+        class="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-forest hover:bg-forest-light text-white text-xs font-bold transition-all border border-emerald-700/60 shadow-sm">
+        <i data-lucide="external-link" class="w-3.5 h-3.5 text-amber-300"></i>
+        <span>Open Guest Menu</span>
+      </a>
+
+      <button onclick="handleAdminLogout()" 
+        class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 text-xs font-bold transition-all border border-rose-900/50">
+        <i data-lucide="lock" class="w-3 h-3"></i>
+        <span>Lock / Sign Out</span>
+      </button>
+
+      <!-- Fitted Green Badge in Admin Sidebar -->
+      <div class="mt-2 p-2.5 rounded-xl bg-forest-light border border-emerald-700/60 text-center shadow-xs">
+        <p class="text-[9.5px] font-black tracking-wider text-white uppercase flex items-center justify-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+          DEVELOPED BY ORIVEX TECH 2026
+        </p>
+        <p class="text-[9px] text-emerald-200/80 font-semibold mt-0.5">Gedaa Hospitality OS v2.6</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================= -->
+  <!-- MAIN WORKSPACE -->
+  <!-- ========================================================= -->
+  <main class="flex-1 flex flex-col min-w-0">
+    
+    <!-- Top Action Bar -->
+    <header class="bg-white border-b border-stone-200 px-6 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-30 shadow-xs">
+      <div>
+        <h2 id="top-view-title" class="text-xl font-black text-stone-900">Menu & Food Editor</h2>
+        <p class="text-xs text-stone-500">Gedaa Restaurant live dish customizer, prices & photos</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="openAddDishModal()" 
+          class="px-4 py-2.5 rounded-xl bg-forest hover:bg-forest-dark text-white font-extrabold text-xs shadow-md flex items-center gap-1.5 transition-transform active:scale-95">
+          <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-300"></i>
+          <span>+ Add New Food</span>
+        </button>
+
+        <button onclick="triggerRefreshData()" 
+          class="px-3 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs flex items-center gap-1.5">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+          <span>Refresh</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Dynamic Admin Content -->
+    <div id="admin-content" class="p-6 flex-1">
+      <!-- Injected by JavaScript -->
+    </div>
+
+    <!-- Fitted Green Footage / Bottom Bar Footer -->
+    <footer class="mt-auto px-6 py-4 bg-forest text-white border-t border-emerald-900 flex flex-col sm:flex-row items-center justify-between text-xs gap-3 shadow-inner">
+      <div class="flex items-center gap-2">
+        <span class="font-black text-amber-300">Gedaa Restaurant Platform</span>
+        <span class="text-emerald-400">•</span>
+        <span class="text-emerald-200 text-[11px]">Bole Road / Adama, Oromia</span>
+      </div>
+      <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-forest-light border border-emerald-600/60 text-[10.5px] font-black tracking-widest text-white uppercase shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+        <span>DEVELOPED BY ORIVEX TECH 2026</span>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Authentication Modal (Shown if not signed in) -->
+  <div id="authModal" class="fixed inset-0 bg-stone-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl border border-stone-200 animate-scaleUp">
+      <div class="w-16 h-16 rounded-2xl bg-forest p-1 mx-auto mb-4 border-2 border-amber-400 shadow-md flex items-center justify-center">
+        <img src="gedaa_logo.svg" alt="Gedaa Logo" class="w-full h-full object-contain">
+      </div>
+      <h3 class="text-lg font-black text-stone-900 mb-1">Staff Authentication Required</h3>
+      <p class="text-xs text-stone-500 mb-5">Please enter the Gedaa Restaurant staff PIN to access this management dashboard.</p>
+      
+      <form id="adminLoginForm" onsubmit="handleAdminLoginSubmit(event)" class="space-y-4">
+        <div>
+          <input type="password" id="staffPinInput" required autofocus maxlength="16" placeholder="Enter Staff PIN" 
+            class="w-full text-center tracking-widest text-lg font-black bg-stone-50 border-2 border-stone-300 rounded-2xl py-3 px-4 focus:bg-white focus:border-forest focus:outline-none">
+        </div>
+        <p id="authErrorMsg" class="text-rose-600 text-xs font-bold hidden"></p>
+        <button type="submit" 
+          class="w-full py-3.5 rounded-2xl bg-forest hover:bg-forest-dark text-white font-extrabold text-xs shadow-md transition-all">
+          Unlock Admin Portal
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Load Core Script -->
+  <script src="app.js"></script>
+
+  <!-- Standalone Admin Portal Script -->
+  <script>
+    let activeAdminTab = 'menu_manager';
+    let adminSearchQuery = '';
+    let adminCategoryFilter = 'all';
+
+    // Staff Authentication Handlers
+    async function checkAdminAuth() {
+      const token = sessionStorage.getItem('gedaa_admin_token');
+      if (!token) {
+        requireAdminAuth();
+        return false;
+      }
+      try {
+        const res = await fetch('/api/auth/verify', {
+          headers: { 'X-Admin-Token': token }
+        });
+        if (res.ok) {
+          document.getElementById('authModal').classList.add('hidden');
+          return true;
+        }
+      } catch (e) {
+        console.warn("Auth check failed", e);
+      }
+      requireAdminAuth();
+      return false;
+    }
+
+    function requireAdminAuth() {
+      const modal = document.getElementById('authModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        const input = document.getElementById('staffPinInput');
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
+      }
+    }
+
+    async function handleAdminLoginSubmit(e) {
+      e.preventDefault();
+      const pinInput = document.getElementById('staffPinInput');
+      const errEl = document.getElementById('authErrorMsg');
+      const pin = pinInput.value.trim();
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin })
+        });
+        const data = await res.json();
+        if (res.ok && data.token) {
+          sessionStorage.setItem('gedaa_admin_token', data.token);
+          document.getElementById('authModal').classList.add('hidden');
+          errEl.classList.add('hidden');
+          showNotification("Welcome back! Staff portal unlocked.", "success");
+          await loadAdminBackendData();
+          renderAdminPage();
+        } else {
+          errEl.innerText = data.error || "Incorrect Staff PIN";
+          errEl.classList.remove('hidden');
+          pinInput.select();
+        }
+      } catch (err) {
+        errEl.innerText = "Connection error. Is the server running?";
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    async function handleAdminLogout() {
+      try {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: getAdminHeaders()
+        });
+      } catch (e) {}
+      sessionStorage.removeItem('gedaa_admin_token');
+      showNotification("Signed out. Admin portal locked.", "info");
+      requireAdminAuth();
+    }
+
+    function setAdminTab(tab) {
+      activeAdminTab = tab;
+      
+      ['dashboard', 'menu_manager', 'take_order', 'kitchen', 'orders_list', 'waiter_calls', 'qr_codes'].forEach(t => {
+        const btn = document.getElementById(`nav-${t}`);
+        if (btn) {
+          if (t === tab) {
+            btn.className = "w-full flex items-center justify-between px-3.5 py-3 rounded-xl transition-colors bg-emerald-800 text-white shadow-sm font-bold text-xs";
+          } else {
+            btn.className = "w-full flex items-center justify-between px-3.5 py-3 rounded-xl transition-colors text-emerald-100/70 hover:bg-forest hover:text-white font-bold text-xs";
+          }
+        }
+      });
+
+      renderAdminPage();
+    }
+
+    function renderAdminPage() {
+      if (document.getElementById('editDishModal') || document.getElementById('addDishModal')) {
+        return;
+      }
+
+      const container = document.getElementById("admin-content");
+      const titleEl = document.getElementById("top-view-title");
+      const state = window.appState;
+
+      const dishesBadge = document.getElementById("badge-dishes-count");
+      if (dishesBadge) dishesBadge.innerText = (state.dishes || []).length;
+
+      const activeOrdersCount = (state.orders || []).filter(o => o.status !== 'completed').length;
+      const ordersBadge = document.getElementById("badge-active-orders");
+      if (ordersBadge) ordersBadge.innerText = activeOrdersCount;
+
+      const waiterCallsBadge = document.getElementById("badge-waiter-calls");
+      if (waiterCallsBadge) {
+        if ((state.waiterCalls || []).length > 0) {
+          waiterCallsBadge.innerText = state.waiterCalls.length;
+          waiterCallsBadge.classList.remove("hidden");
+        } else {
+          waiterCallsBadge.classList.add("hidden");
+        }
+      }
+
+      if (activeAdminTab === 'dashboard') {
+        titleEl.innerText = "Dashboard Overview & Sales Analytics";
+        container.innerHTML = renderDashboardTab();
+      } else if (activeAdminTab === 'menu_manager') {
+        titleEl.innerText = "Menu & Food Customizer (Photos, Names, Categories & Prices)";
+        container.innerHTML = renderMenuManagerTab();
+      } else if (activeAdminTab === 'take_order') {
+        titleEl.innerText = "Point-of-Sale (Take Table Order)";
+        container.innerHTML = renderTakeOrderTab();
+      } else if (activeAdminTab === 'kitchen') {
+        titleEl.innerText = "Kitchen Display System (KDS)";
+        container.innerHTML = renderKitchenTab();
+      } else if (activeAdminTab === 'orders_list') {
+        titleEl.innerText = "All Orders Log";
+        container.innerHTML = renderOrdersListTab();
+      } else if (activeAdminTab === 'waiter_calls') {
+        titleEl.innerText = "Active Waiter Calls";
+        container.innerHTML = renderWaiterCallsTab();
+      } else if (activeAdminTab === 'qr_codes') {
+        titleEl.innerText = "Table QR Code Generator & Badges";
+        container.innerHTML = renderQRCodesTab();
+      }
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    // TAB: MENU MANAGEMENT (With XSS Sanitization)
+    function renderMenuManagerTab() {
+      const state = window.appState;
+      let dishes = state.dishes || [];
+
+      if (adminCategoryFilter !== 'all') {
+        dishes = dishes.filter(d => d.category === adminCategoryFilter);
+      }
+
+      if (adminSearchQuery.trim() !== '') {
+        const q = adminSearchQuery.toLowerCase();
+        dishes = dishes.filter(d => {
+          const tEn = (d.title_en || d.titleEn || '').toLowerCase();
+          const tAm = (d.title_am || d.titleAm || '');
+          const c = (d.category || '').toLowerCase();
+          return tEn.includes(q) || tAm.includes(q) || c.includes(q);
+        });
+      }
+
+      return `
+        <div class="space-y-4">
+          <!-- Toolbar -->
+          <div class="bg-white p-4 rounded-3xl border border-stone-200 shadow-xs space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="relative flex-1 min-w-[220px]">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400"></i>
+                <input type="text" 
+                  value="${escapeHtml(adminSearchQuery)}" 
+                  oninput="adminSearchQuery = this.value; renderAdminPage();"
+                  placeholder="Search dishes by name or category..." 
+                  class="w-full bg-stone-50 border border-stone-200 rounded-xl pl-9 pr-4 py-2 text-xs focus:bg-white focus:outline-none focus:ring-1 focus:ring-forest font-medium">
+              </div>
+
+              <button onclick="openAddDishModal()" class="px-4 py-2 bg-forest text-white rounded-xl font-bold text-xs shadow-xs hover:bg-forest-dark flex items-center gap-1.5 flex-shrink-0">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Add New Food</span>
+              </button>
+            </div>
+
+            <!-- Categories Filter Pills -->
+            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1 border-t border-stone-100">
+              ${CATEGORIES.map(cat => {
+                const isSelected = adminCategoryFilter === cat.id;
+                return `
+                  <button onclick="adminCategoryFilter = '${escapeHtml(cat.id)}'; renderAdminPage();" 
+                    class="px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                      isSelected 
+                        ? 'bg-forest text-white shadow-xs' 
+                        : 'bg-stone-50 text-stone-600 hover:bg-stone-100 border border-stone-200/60'
+                    }">
+                    ${escapeHtml(cat.nameEn)}
+                  </button>
+                `;
+              }).join("")}
+            </div>
+          </div>
+
+          <!-- Dishes Table -->
+          <div class="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-xs">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-stone-50 border-b border-stone-200 text-stone-400 font-bold uppercase tracking-wider text-[10px]">
+                    <th class="py-3.5 px-5">Food Image</th>
+                    <th class="py-3.5 px-5">Food Names (English / Amharic)</th>
+                    <th class="py-3.5 px-5">Category</th>
+                    <th class="py-3.5 px-5">Price (ETB)</th>
+                    <th class="py-3.5 px-5">Stock Status</th>
+                    <th class="py-3.5 px-5 text-right">Customize & Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100">
+                  ${dishes.map(dish => {
+                    const isSoldOut = dish.is_available === false || dish.is_available === 0;
+                    const safeId = escapeHtml(dish.id);
+                    const safeTitleEn = escapeHtml(dish.title_en || dish.titleEn || '');
+                    const safeTitleAm = escapeHtml(dish.title_am || dish.titleAm || '');
+                    const safeCategory = escapeHtml(dish.category || '');
+                    const safeImage = sanitizeUrl(dish.image);
+
+                    return `
+                      <tr class="hover:bg-stone-50/80 transition-colors">
+                        <td class="py-3.5 px-5">
+                          <div class="relative w-16 h-16 rounded-2xl overflow-hidden bg-stone-100 border border-stone-200 group cursor-pointer shadow-xs"
+                               onclick="openEditDishModal('${safeId}')" title="Click to edit image and details">
+                            <img src="${safeImage}" alt="${safeTitleEn}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80';" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white text-[9px] font-black transition-opacity">
+                              <i data-lucide="camera" class="w-4 h-4 mb-0.5"></i>
+                              <span>Change</span>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td class="py-3.5 px-5 max-w-sm">
+                          <div class="flex items-center gap-2">
+                            <p class="font-extrabold text-stone-900 text-sm">${safeTitleEn}</p>
+                            ${dish.featured ? `<span class="bg-amber-100 text-amber-800 font-black text-[9px] px-1.5 py-0.5 rounded">Featured</span>` : ''}
+                          </div>
+                          <p class="text-stone-500 text-xs font-medium mb-1.5">${safeTitleAm}</p>
+                          <div class="flex flex-wrap gap-1">
+                            ${(dish.badges || []).map(b => `<span class="bg-stone-100 text-stone-600 font-bold text-[9px] px-1.5 py-0.5 rounded border border-stone-200">${escapeHtml(b)}</span>`).join("")}
+                          </div>
+                        </td>
+
+                        <td class="py-3.5 px-5">
+                          <span class="bg-emerald-50 text-emerald-800 font-bold px-2.5 py-1 rounded-lg border border-emerald-200 uppercase text-[10px]">
+                            ${safeCategory}
+                          </span>
+                        </td>
+
+                        <td class="py-3.5 px-5">
+                          <div class="flex items-center gap-1.5">
+                            <input type="number" 
+                              id="price-input-${safeId}" 
+                              value="${Number(dish.price || 0)}" 
+                              class="w-24 bg-stone-50 border border-stone-300 rounded-xl px-2.5 py-1.5 text-xs font-black text-stone-900 focus:bg-white focus:ring-1 focus:ring-forest">
+                            <button onclick="handleSavePrice('${safeId}')" 
+                              class="px-2.5 py-1.5 bg-forest hover:bg-forest-dark text-white rounded-xl text-[10px] font-bold shadow-xs">
+                              Save
+                            </button>
+                          </div>
+                        </td>
+
+                        <td class="py-3.5 px-5">
+                          <button onclick="handleToggleAvailability('${safeId}', ${isSoldOut ? 'true' : 'false'})" 
+                            class="px-3 py-1.5 rounded-full text-[10px] font-extrabold transition-all shadow-xs ${
+                              isSoldOut ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                            }">
+                            ${isSoldOut ? '🔴 Sold Out' : '🟢 In Stock'}
+                          </button>
+                        </td>
+
+                        <td class="py-3.5 px-5 text-right">
+                          <div class="flex items-center justify-end gap-2">
+                            <button onclick="openEditDishModal('${safeId}')" 
+                              class="px-3.5 py-2 rounded-xl bg-forest-subtle hover:bg-forest text-forest hover:text-white font-extrabold text-xs flex items-center gap-1.5 transition-all border border-emerald-300 shadow-xs">
+                              <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+                              <span>Customize</span>
+                            </button>
+                            <button onclick="apiDeleteDish('${safeId}')" 
+                              class="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors" title="Delete Dish">
+                              <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    `;
+                  }).join("")}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // MODAL: COMPLETE DISH CUSTOMIZER
+    function openEditDishModal(dishId) {
+      const state = window.appState;
+      const dish = (state.dishes || []).find(d => d.id === dishId);
+      if (!dish) return;
+
+      const existingModal = document.getElementById("editDishModal");
+      if (existingModal) existingModal.remove();
+
+      const safeId = escapeHtml(dish.id);
+      const safeTitleEn = escapeHtml(dish.title_en || dish.titleEn || '');
+      const safeTitleAm = escapeHtml(dish.title_am || dish.titleAm || '');
+      const safeCategory = escapeHtml(dish.category || 'traditional');
+      const safeDescEn = escapeHtml(dish.desc_en || dish.descEn || '');
+      const safeDescAm = escapeHtml(dish.desc_am || dish.descAm || '');
+      const safeImage = sanitizeUrl(dish.image);
+
+      const modal = document.createElement("div");
+      modal.id = "editDishModal";
+      modal.className = "fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto";
+      modal.innerHTML = `
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-7 shadow-2xl border border-stone-200 animate-scaleUp my-8 text-xs">
+          <div class="flex items-center justify-between pb-4 border-b border-stone-200 mb-5">
+            <div>
+              <span class="text-[10px] font-bold text-emerald-800 uppercase bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                Gedaa Menu • Category: ${safeCategory}
+              </span>
+              <h3 class="font-black text-lg text-stone-900 mt-1">Customize: ${safeTitleEn}</h3>
+              <p class="text-stone-500 text-[11px]">Update photo, English/Amharic names, category, price and badges.</p>
+            </div>
+            <button onclick="document.getElementById('editDishModal').remove()" class="text-stone-400 hover:text-stone-700 p-1">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <form id="editDishForm" onsubmit="handleEditDishSubmit(event, '${safeId}')" class="space-y-4">
+            
+            <div class="bg-stone-50 p-4 rounded-2xl border border-stone-200 flex flex-col sm:flex-row gap-4 items-center">
+              <div class="w-28 h-28 rounded-2xl overflow-hidden bg-stone-200 border-2 border-white shadow-md flex-shrink-0 relative">
+                <img id="editImagePreview" src="${safeImage}" alt="Preview" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80';" class="w-full h-full object-cover">
+              </div>
+
+              <div class="flex-1 space-y-2 w-full">
+                <label class="block font-bold text-stone-800">Customize Food Image</label>
+                <div class="flex items-center gap-2">
+                  <input type="file" id="editImageFileInput" accept="image/jpeg,image/png,image/webp,image/gif" 
+                    onchange="handlePreviewLocalImage(this)"
+                    class="text-[11px] text-stone-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-forest file:text-white hover:file:bg-forest-dark cursor-pointer">
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <input type="url" id="editImageUrlInput" 
+                    value="${safeImage}" 
+                    oninput="document.getElementById('editImagePreview').src = sanitizeUrl(this.value)"
+                    placeholder="Or paste image URL (https://...)" 
+                    class="w-full bg-white border border-stone-300 rounded-xl px-3 py-1.5 text-xs focus:ring-1 focus:ring-forest">
+                </div>
+                <p class="text-[10px] text-stone-400">Choose a photo from your PC/phone or enter an online image link (JPG, PNG, WebP up to 5MB).</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label class="block font-bold text-stone-800 mb-1">Dish Name (English) *</label>
+                <input type="text" id="edit_title_en" required maxlength="100" value="${safeTitleEn}" 
+                  class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-bold text-stone-900 focus:bg-white focus:ring-1 focus:ring-forest">
+              </div>
+
+              <div>
+                <label class="block font-bold text-stone-800 mb-1">Dish Name (Amharic - አማርኛ) *</label>
+                <input type="text" id="edit_title_am" required maxlength="100" value="${safeTitleAm}" 
+                  class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-bold text-stone-900 focus:bg-white focus:ring-1 focus:ring-forest">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label class="block font-bold text-stone-800 mb-1">Menu Category *</label>
+                <select id="edit_category" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-extrabold text-stone-900 focus:bg-white focus:ring-1 focus:ring-forest">
+                  ${CATEGORIES.filter(c => c.id !== 'all').map(c => `
+                    <option value="${escapeHtml(c.id)}" ${dish.category === c.id ? 'selected' : ''}>${escapeHtml(c.nameEn)} (${escapeHtml(c.nameAm)})</option>
+                  `).join("")}
+                </select>
+              </div>
+
+              <div>
+                <label class="block font-bold text-stone-800 mb-1">Price in ETB *</label>
+                <div class="relative">
+                  <input type="number" step="0.01" min="0" max="100000" id="edit_price" required value="${dish.price}" 
+                    class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-black text-stone-900 focus:bg-white focus:ring-1 focus:ring-forest">
+                  <span class="absolute right-3 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-[11px]">ETB</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-bold text-stone-800 mb-1.5">Dietary & Flavor Badges</label>
+              <div class="flex flex-wrap gap-2 text-[11px]">
+                ${['spicy', 'fasting', 'gluten', 'dairy', 'popular', 'eggs'].map(b => {
+                  const checked = (dish.badges || []).includes(b);
+                  const label = b === 'spicy' ? '🌶️ Spicy' :
+                                b === 'fasting' ? '🌱 Fasting' :
+                                b === 'gluten' ? '🌾 Gluten' :
+                                b === 'dairy' ? '🥛 Dairy' :
+                                b === 'popular' ? '⭐ Popular' : '🥚 Eggs';
+                  return `
+                    <label class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 cursor-pointer font-bold text-stone-700">
+                      <input type="checkbox" name="edit_badges" value="${b}" ${checked ? 'checked' : ''} class="rounded text-forest focus:ring-forest">
+                      <span>${label}</span>
+                    </label>
+                  `;
+                }).join("")}
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label class="block font-bold text-stone-800 mb-1">Description (English)</label>
+                <textarea id="edit_desc_en" rows="2" maxlength="500" 
+                  class="w-full bg-stone-50 border border-stone-300 rounded-xl p-2.5 text-xs text-stone-900 focus:bg-white focus:ring-1 focus:ring-forest">${safeDescEn}</textarea>
+              </div>
+
+              <div>
+                <label class="block font-bold text-stone-800 mb-1">Description (Amharic - አማርኛ)</label>
+                <textarea id="edit_desc_am" rows="2" maxlength="500" 
+                  class="w-full bg-stone-50 border border-stone-300 rounded-xl p-2.5 text-xs text-stone-900 focus:bg-white focus:ring-1 focus:ring-forest">${safeDescAm}</textarea>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-6 pt-2 pb-1 text-xs">
+              <label class="flex items-center gap-2 cursor-pointer font-bold text-stone-800">
+                <input type="checkbox" id="edit_is_available" ${dish.is_available !== false ? 'checked' : ''} class="w-4 h-4 rounded text-forest focus:ring-forest">
+                <span>In Stock & Available to Order</span>
+              </label>
+
+              <label class="flex items-center gap-2 cursor-pointer font-bold text-stone-800">
+                <input type="checkbox" id="edit_featured" ${dish.featured ? 'checked' : ''} class="w-4 h-4 rounded text-amber-500 focus:ring-amber-500">
+                <span>⭐ Feature on Top of Menu</span>
+              </label>
+            </div>
+
+            <div class="pt-4 border-t border-stone-200 flex justify-between items-center">
+              <button type="button" onclick="apiDeleteDish('${safeId}'); document.getElementById('editDishModal').remove();" 
+                class="px-4 py-2 rounded-xl bg-rose-50 text-rose-700 font-bold hover:bg-rose-100 flex items-center gap-1.5">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                <span>Delete Dish</span>
+              </button>
+
+              <div class="flex gap-2">
+                <button type="button" onclick="document.getElementById('editDishModal').remove()" 
+                  class="px-5 py-2.5 rounded-xl bg-stone-100 text-stone-700 font-bold hover:bg-stone-200">
+                  Cancel
+                </button>
+                <button type="submit" 
+                  class="px-6 py-2.5 rounded-xl bg-forest hover:bg-forest-dark text-white font-black shadow-md flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+                  <span>Save All Changes</span>
+                </button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function handlePreviewLocalImage(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (file.size > 5 * 1024 * 1024) {
+          showNotification("Image exceeds 5MB size limit", "error");
+          input.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          document.getElementById('editImagePreview').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function handleEditDishSubmit(e, dishId) {
+      e.preventDefault();
+      const fileInput = document.getElementById("editImageFileInput");
+      let imageUrl = sanitizeUrl(document.getElementById("editImageUrlInput").value.trim());
+
+      if (fileInput && fileInput.files.length > 0) {
+        showNotification("Uploading new food photo...", "info");
+        try {
+          imageUrl = await apiUploadImage(fileInput.files[0]);
+        } catch (err) {
+          console.error("Upload error", err);
+          showNotification(err.message || "Image upload failed, keeping current photo", "error");
+        }
+      }
+
+      const badgeElements = document.querySelectorAll('input[name="edit_badges"]:checked');
+      const badges = Array.from(badgeElements).map(b => b.value);
+
+      const payload = {
+        title_en: document.getElementById("edit_title_en").value.trim(),
+        title_am: document.getElementById("edit_title_am").value.trim(),
+        category: document.getElementById("edit_category").value,
+        price: parseFloat(document.getElementById("edit_price").value),
+        desc_en: document.getElementById("edit_desc_en").value.trim(),
+        desc_am: document.getElementById("edit_desc_am").value.trim(),
+        badges: badges,
+        image: imageUrl,
+        is_available: document.getElementById("edit_is_available").checked,
+        featured: document.getElementById("edit_featured").checked
+      };
+
+      const success = await apiUpdateDish(dishId, payload);
+      if (success) {
+        document.getElementById("editDishModal").remove();
+        renderAdminPage();
+      }
+    }
+
+    // Modal: Add Dish
+    function openAddDishModal() {
+      const existing = document.getElementById("addDishModal");
+      if (existing) existing.remove();
+
+      const modal = document.createElement("div");
+      modal.id = "addDishModal";
+      modal.className = "fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto";
+      modal.innerHTML = `
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-stone-200 animate-scaleUp my-8 text-xs">
+          <div class="flex items-center justify-between pb-3 border-b border-stone-200 mb-4">
+            <h3 class="font-extrabold text-base text-stone-900">+ Add New Food to Gedaa Menu</h3>
+            <button onclick="document.getElementById('addDishModal').remove()" class="text-stone-400 hover:text-stone-700">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <form id="newDishForm" onsubmit="handleCreateDishSubmit(event)" class="space-y-3.5">
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Dish Name (English) *</label>
+              <input type="text" name="title_en" required maxlength="100" placeholder="e.g. Gedaa Special Tibs" 
+                class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs focus:bg-white focus:ring-1 focus:ring-forest font-bold">
+            </div>
+
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Dish Name (Amharic) *</label>
+              <input type="text" name="title_am" required maxlength="100" placeholder="e.g. ገዳ ልዩ ጥብስ" 
+                class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs focus:bg-white focus:ring-1 focus:ring-forest font-bold">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-stone-700 mb-1">Category *</label>
+                <select name="category" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-bold focus:bg-white">
+                  ${CATEGORIES.filter(c => c.id !== 'all').map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.nameEn)} (${escapeHtml(c.nameAm)})</option>`).join("")}
+                </select>
+              </div>
+
+              <div>
+                <label class="block font-bold text-stone-700 mb-1">Price (ETB) *</label>
+                <input type="number" step="0.01" min="0" max="100000" name="price" required placeholder="550" 
+                  class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-black focus:bg-white focus:ring-1 focus:ring-forest">
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Dietary / Flavor Badges</label>
+              <div class="flex flex-wrap gap-2 text-[11px]">
+                <label class="flex items-center gap-1"><input type="checkbox" name="badges" value="spicy"> 🌶️ Spicy</label>
+                <label class="flex items-center gap-1"><input type="checkbox" name="badges" value="fasting"> 🌱 Fasting</label>
+                <label class="flex items-center gap-1"><input type="checkbox" name="badges" value="gluten"> 🌾 Gluten</label>
+                <label class="flex items-center gap-1"><input type="checkbox" name="badges" value="dairy"> 🥛 Dairy</label>
+                <label class="flex items-center gap-1"><input type="checkbox" name="badges" value="popular"> ⭐ Popular</label>
+              </div>
+            </div>
+
+            <div class="bg-stone-50 p-3 rounded-2xl border border-stone-200 space-y-2">
+              <label class="block font-bold text-stone-700">Food Image (Upload File or Paste URL)</label>
+              <div class="flex items-center gap-2">
+                <input type="file" id="modalImageFileInput" accept="image/jpeg,image/png,image/webp,image/gif" class="text-[11px] text-stone-500 file:mr-2 file:py-1 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-100 file:text-emerald-800 hover:file:bg-emerald-200">
+              </div>
+              <input type="url" id="modalImageUrlInput" name="image" placeholder="Or paste image URL (https://...)" 
+                class="w-full bg-white border border-stone-300 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-forest">
+            </div>
+
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Description (English)</label>
+              <textarea name="desc_en" rows="2" maxlength="500" placeholder="Ingredients, preparation style..." 
+                class="w-full bg-stone-50 border border-stone-300 rounded-xl p-2 text-xs focus:bg-white focus:ring-1 focus:ring-forest"></textarea>
+            </div>
+
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Description (Amharic)</label>
+              <textarea name="desc_am" rows="2" maxlength="500" placeholder="የምግብ ዝግጅት እና ማብራሪያ..." 
+                class="w-full bg-stone-50 border border-stone-300 rounded-xl p-2 text-xs focus:bg-white focus:ring-1 focus:ring-forest"></textarea>
+            </div>
+
+            <div class="pt-3 border-t border-stone-200 flex justify-end gap-2">
+              <button type="button" onclick="document.getElementById('addDishModal').remove()" 
+                class="px-4 py-2 rounded-xl bg-stone-100 text-stone-700 font-bold hover:bg-stone-200">
+                Cancel
+              </button>
+              <button type="submit" 
+                class="px-6 py-2 rounded-xl bg-forest hover:bg-forest-dark text-white font-black shadow-md">
+                Save Dish to Menu
+              </button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      if (window.lucide) lucide.createIcons();
+    }
+
+    async function handleCreateDishSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const fileInput = document.getElementById("modalImageFileInput");
+      let imageUrl = sanitizeUrl(document.getElementById("modalImageUrlInput").value.trim());
+
+      if (fileInput && fileInput.files.length > 0) {
+        showNotification("Uploading food photo...", "info");
+        try {
+          imageUrl = await apiUploadImage(fileInput.files[0]);
+        } catch (err) {
+          console.error("Upload error", err);
+          showNotification(err.message || "Image upload failed, using default image", "error");
+        }
+      }
+
+      if (!imageUrl || imageUrl.includes('images.unsplash.com/photo-1546069901-ba9599a7e63c')) {
+        imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80";
+      }
+
+      const badgeElements = form.querySelectorAll('input[name="badges"]:checked');
+      const badges = Array.from(badgeElements).map(b => b.value);
+
+      const payload = {
+        title_en: form.title_en.value.trim(),
+        title_am: form.title_am.value.trim(),
+        category: form.category.value,
+        price: parseFloat(form.price.value),
+        desc_en: form.desc_en.value.trim(),
+        desc_am: form.desc_am.value.trim(),
+        badges: badges,
+        image: imageUrl,
+        is_available: true
+      };
+
+      const success = await apiAddDish(payload);
+      if (success) {
+        document.getElementById("addDishModal").remove();
+        renderAdminPage();
+      }
+    }
+
+    async function handleSavePrice(dishId) {
+      const input = document.getElementById(`price-input-${dishId}`);
+      if (!input) return;
+      const newPrice = parseFloat(input.value);
+      if (isNaN(newPrice) || newPrice < 0) {
+        showNotification("Please enter a valid price.", "error");
+        return;
+      }
+      await apiUpdateDish(dishId, { price: newPrice });
+      renderAdminPage();
+    }
+
+    async function handleToggleAvailability(dishId, currentVal) {
+      await apiUpdateDish(dishId, { is_available: currentVal });
+      renderAdminPage();
+    }
+
+    // POS Handlers
+    function addPosItem(id) {
+      if (!window.appState.posOrder.items[id]) {
+        window.appState.posOrder.items[id] = 1;
+      } else {
+        window.appState.posOrder.items[id] += 1;
+      }
+      renderAdminPage();
+    }
+
+    function removePosItem(id) {
+      if (window.appState.posOrder.items[id]) {
+        window.appState.posOrder.items[id] -= 1;
+        if (window.appState.posOrder.items[id] <= 0) {
+          delete window.appState.posOrder.items[id];
+        }
+      }
+      renderAdminPage();
+    }
+
+    async function handleDispatchPosOrder() {
+      const pos = window.appState.posOrder;
+      const itemsList = Object.entries(pos.items).map(([id, qty]) => {
+        const d = window.appState.dishes.find(item => item.id === id);
+        return { id, title: d.title_en || d.titleEn, qty, price: d.price };
+      });
+
+      if (itemsList.length === 0) {
+        showNotification("Please add at least one item to the ticket.", "error");
+        return;
+      }
+
+      const { subtotal, serviceCharge, vat, total } = calculateBill(pos.items);
+      const payload = {
+        table_number: pos.table,
+        order_type: pos.type,
+        customer_name: "POS Staff",
+        items: itemsList,
+        subtotal,
+        service_charge: serviceCharge,
+        vat,
+        total
+      };
+
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: getAdminHeaders(),
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          showNotification(`Order dispatched for Table ${escapeHtml(pos.table)}!`, "success");
+          window.appState.posOrder.items = {};
+          await loadAdminBackendData();
+          renderAdminPage();
+        } else {
+          showNotification("Failed to dispatch POS order", "error");
+        }
+      } catch (err) {
+        showNotification("Failed to dispatch POS order", "error");
+      }
+    }
+
+    // Dashboard Overview
+    function renderDashboardTab() {
+      const state = window.appState;
+      const stats = state.stats || {};
+
+      return `
+        <div class="space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="bg-white rounded-3xl p-5 border border-stone-200 shadow-xs">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-stone-400 uppercase tracking-wider">Today's Sales</span>
+                <span class="p-2 rounded-xl bg-emerald-50 text-emerald-700"><i data-lucide="circle-dollar-sign" class="w-5 h-5"></i></span>
+              </div>
+              <h3 class="text-3xl font-black text-emerald-950">${Number(stats.todaySales || 0).toLocaleString()} <span class="text-xs font-semibold text-stone-400">ETB</span></h3>
+              <p class="text-[11px] text-emerald-700 font-semibold mt-2">↑ Gedaa Restaurant Live Orders</p>
+            </div>
+
+            <div class="bg-white rounded-3xl p-5 border border-stone-200 shadow-xs">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-stone-400 uppercase tracking-wider">Total Orders</span>
+                <span class="p-2 rounded-xl bg-blue-50 text-blue-700"><i data-lucide="shopping-bag" class="w-5 h-5"></i></span>
+              </div>
+              <h3 class="text-3xl font-black text-stone-900">${stats.totalOrders || state.orders.length}</h3>
+              <p class="text-[11px] text-stone-500 font-medium mt-2">Across all Gedaa tables</p>
+            </div>
+
+            <div class="bg-white rounded-3xl p-5 border border-stone-200 shadow-xs">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-stone-400 uppercase tracking-wider">Active Dishes</span>
+                <span class="p-2 rounded-xl bg-amber-50 text-amber-700"><i data-lucide="utensils" class="w-5 h-5"></i></span>
+              </div>
+              <h3 class="text-3xl font-black text-stone-900">${(state.dishes || []).length}</h3>
+              <p class="text-[11px] text-stone-500 font-medium mt-2">In live digital menu</p>
+            </div>
+
+            <div class="bg-white rounded-3xl p-5 border border-stone-200 shadow-xs">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-stone-400 uppercase tracking-wider">Occupied Tables</span>
+                <span class="p-2 rounded-xl bg-purple-50 text-purple-700"><i data-lucide="layout-grid" class="w-5 h-5"></i></span>
+              </div>
+              <h3 class="text-3xl font-black text-purple-950">${stats.activeTables || 0}</h3>
+              <p class="text-[11px] text-purple-700 font-semibold mt-2">Active dining guests</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTakeOrderTab() {
+      const state = window.appState;
+      const pos = state.posOrder;
+      const { subtotal, serviceCharge, vat, total } = calculateBill(pos.items);
+
+      return `
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 space-y-4">
+            <div class="bg-white rounded-3xl p-5 border border-stone-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 class="font-extrabold text-sm text-stone-900">Select Items for Order</h3>
+                <p class="text-[11px] text-stone-500">Tap dish cards to increment ticket quantity</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-stone-700">Assign Table:</span>
+                <select onchange="window.appState.posOrder.table = this.value; renderAdminPage();" 
+                  class="bg-stone-50 border border-stone-300 rounded-xl px-3 py-1.5 text-xs font-extrabold text-stone-900 focus:ring-1 focus:ring-forest">
+                  ${[1,2,3,4,5,6,7,8,9,10,11,12].map(n => {
+                    const num = n < 10 ? '0' + n : '' + n;
+                    return `<option value="${num}" ${pos.table === num ? 'selected' : ''}>Table ${num}</option>`;
+                  }).join("")}
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
+              ${(state.dishes || []).map(d => {
+                const count = pos.items[d.id] || 0;
+                const safeTitle = escapeHtml(d.title_en || d.titleEn || '');
+                const safeImage = sanitizeUrl(d.image);
+                const safeId = escapeHtml(d.id);
+
+                return `
+                  <div onclick="addPosItem('${safeId}')" 
+                    class="bg-white rounded-3xl p-3.5 border border-stone-200 shadow-xs cursor-pointer hover:border-emerald-600 transition-all select-none relative group">
+                    <div class="h-28 w-full rounded-2xl overflow-hidden mb-2.5 bg-stone-100">
+                      <img src="${safeImage}" alt="${safeTitle}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80';" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-extrabold text-xs text-stone-900 line-clamp-1">${safeTitle}</h4>
+                    <p class="font-black text-emerald-800 text-xs mt-1">${Number(d.price).toLocaleString()} ETB</p>
+                    ${count > 0 ? `
+                      <span class="absolute top-2 right-2 bg-emerald-700 text-white font-extrabold text-xs w-6 h-6 rounded-full flex items-center justify-center shadow-md">
+                        ${count}
+                      </span>
+                    ` : ''}
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          </div>
+
+          <div class="bg-white rounded-3xl p-6 border border-stone-200 shadow-sm h-fit space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+              <h3 class="font-extrabold text-base text-stone-900">Current Ticket • Table ${escapeHtml(pos.table)}</h3>
+              <button onclick="window.appState.posOrder.items = {}; renderAdminPage();" class="text-rose-600 text-xs font-bold hover:underline">
+                Clear
+              </button>
+            </div>
+
+            <div class="space-y-2 max-h-60 overflow-y-auto no-scrollbar">
+              ${Object.entries(pos.items).map(([id, qty]) => {
+                const dish = state.dishes.find(d => d.id === id);
+                if (!dish) return '';
+                const safeDishTitle = escapeHtml(dish.title_en || dish.titleEn || '');
+                const safeId = escapeHtml(dish.id);
+                return `
+                  <div class="flex items-center justify-between py-1.5 border-b border-stone-100 text-xs">
+                    <div>
+                      <p class="font-bold text-stone-900">${safeDishTitle}</p>
+                      <p class="text-[10px] text-stone-400">${Number(dish.price).toLocaleString()} ETB x ${qty}</p>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <button onclick="removePosItem('${safeId}')" class="w-6 h-6 rounded-lg bg-stone-100 font-bold text-stone-700 hover:bg-stone-200">-</button>
+                      <span class="font-extrabold w-4 text-center">${qty}</span>
+                      <button onclick="addPosItem('${safeId}')" class="w-6 h-6 rounded-lg bg-forest font-bold text-white">+</button>
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+
+              ${Object.keys(pos.items).length === 0 ? `
+                <p class="text-xs text-stone-400 text-center py-8">Ticket is empty. Tap dishes on the left to add.</p>
+              ` : ''}
+            </div>
+
+            <div class="bg-stone-50 rounded-2xl p-4 space-y-2 text-xs border border-stone-100">
+              <div class="flex justify-between text-stone-500">
+                <span>Subtotal:</span>
+                <span>${subtotal.toLocaleString()} ETB</span>
+              </div>
+              <div class="flex justify-between text-stone-500">
+                <span>Service Charge (10%):</span>
+                <span>${serviceCharge.toLocaleString()} ETB</span>
+              </div>
+              <div class="flex justify-between text-stone-500 pb-1 border-b border-stone-200">
+                <span>VAT (15%):</span>
+                <span>${vat.toLocaleString()} ETB</span>
+              </div>
+              <div class="flex justify-between font-extrabold text-stone-900 text-sm pt-1">
+                <span>Total Due:</span>
+                <span class="text-emerald-800 text-base">${total.toLocaleString()} ETB</span>
+              </div>
+            </div>
+
+            <button onclick="handleDispatchPosOrder()" 
+              class="w-full py-4 rounded-2xl bg-forest hover:bg-forest-dark text-white font-extrabold text-xs shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2">
+              <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+              <span>Send Ticket to Kitchen • ${total.toLocaleString()} ETB</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderKitchenTab() {
+      const state = window.appState;
+      const orders = state.orders || [];
+      const pendingOrders = orders.filter(o => o.status === "pending");
+      const preparingOrders = orders.filter(o => o.status === "preparing");
+      const readyOrders = orders.filter(o => o.status === "ready");
+
+      return `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-stone-50 rounded-3xl p-5 border border-stone-200 shadow-xs">
+            <span class="font-extrabold text-xs text-amber-700 uppercase tracking-wider block mb-4">Pending Confirmation (${pendingOrders.length})</span>
+            <div class="space-y-3">
+              ${pendingOrders.map(o => renderTicketCard(o, 'pending')).join("")}
+              ${pendingOrders.length === 0 ? `<p class="text-xs text-stone-400 text-center py-10">No pending tickets</p>` : ''}
+            </div>
+          </div>
+
+          <div class="bg-stone-50 rounded-3xl p-5 border border-stone-200 shadow-xs">
+            <span class="font-extrabold text-xs text-blue-700 uppercase tracking-wider block mb-4">Cooking in Kitchen (${preparingOrders.length})</span>
+            <div class="space-y-3">
+              ${preparingOrders.map(o => renderTicketCard(o, 'preparing')).join("")}
+              ${preparingOrders.length === 0 ? `<p class="text-xs text-stone-400 text-center py-10">No tickets cooking</p>` : ''}
+            </div>
+          </div>
+
+          <div class="bg-stone-50 rounded-3xl p-5 border border-stone-200 shadow-xs">
+            <span class="font-extrabold text-xs text-emerald-700 uppercase tracking-wider block mb-4">Ready to Serve (${readyOrders.length})</span>
+            <div class="space-y-3">
+              ${readyOrders.map(o => renderTicketCard(o, 'ready')).join("")}
+              ${readyOrders.length === 0 ? `<p class="text-xs text-stone-400 text-center py-10">No ready tickets</p>` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTicketCard(order, colStatus) {
+      const safeTable = escapeHtml(order.table_number || order.table || '04');
+      const safeId = escapeHtml(order.id || '');
+      const safeTime = order.created_at ? escapeHtml(order.created_at.slice(11, 16)) : 'Just now';
+
+      return `
+        <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-sm space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b border-stone-100">
+            <div>
+              <span class="font-black text-xs text-stone-900">TABLE ${safeTable}</span>
+              <span class="text-[11px] text-stone-400 ml-1.5">${safeId}</span>
+            </div>
+            <span class="text-[10px] bg-stone-100 px-2 py-0.5 rounded-md text-stone-600 font-mono font-bold">
+              ${safeTime}
+            </span>
+          </div>
+
+          <div class="space-y-1.5 text-xs">
+            ${(order.items || []).map(it => `
+              <div class="flex justify-between font-bold text-stone-800">
+                <span>${Number(it.quantity || it.qty || 1)}x ${escapeHtml(it.title || 'Dish')}</span>
+                <span class="text-stone-400 text-[11px]">Cook</span>
+              </div>
+            `).join("")}
+          </div>
+
+          <div class="pt-2 border-t border-stone-100">
+            ${colStatus === 'pending' ? `
+              <button onclick="apiUpdateOrderStatus('${safeId}', 'preparing')" class="w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs">
+                Start Preparing
+              </button>
+            ` : colStatus === 'preparing' ? `
+              <button onclick="apiUpdateOrderStatus('${safeId}', 'ready')" class="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs">
+                Mark Ready to Serve
+              </button>
+            ` : `
+              <button onclick="apiUpdateOrderStatus('${safeId}', 'completed')" class="w-full py-2 rounded-xl bg-stone-900 hover:bg-black text-white font-bold text-xs shadow-xs">
+                Complete / Served
+              </button>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderOrdersListTab() {
+      const state = window.appState;
+      const orders = state.orders || [];
+
+      return `
+        <div class="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-xs">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-stone-50 border-b border-stone-200 text-stone-400 font-bold uppercase tracking-wider text-[10px]">
+                  <th class="py-3.5 px-5">Ticket ID</th>
+                  <th class="py-3.5 px-5">Table</th>
+                  <th class="py-3.5 px-5">Customer</th>
+                  <th class="py-3.5 px-5">Items</th>
+                  <th class="py-3.5 px-5">Total (ETB)</th>
+                  <th class="py-3.5 px-5">Status</th>
+                  <th class="py-3.5 px-5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-stone-100">
+                ${orders.map(order => {
+                  const safeId = escapeHtml(order.id);
+                  const safeTable = escapeHtml(order.table_number || order.table || '04');
+                  const safeCust = escapeHtml(order.customer_name || 'Walk-in');
+                  const itemsSummary = (order.items || []).map(it => `${Number(it.quantity || it.qty || 1)}x ${escapeHtml(it.title || '')}`).join(", ");
+                  const safeStatus = escapeHtml(order.status || 'pending');
+
+                  return `
+                    <tr class="hover:bg-stone-50/80 transition-colors">
+                      <td class="py-3.5 px-5 font-mono font-bold text-stone-900">${safeId}</td>
+                      <td class="py-3.5 px-5 font-extrabold text-stone-800">TABLE ${safeTable}</td>
+                      <td class="py-3.5 px-5 text-stone-600">${safeCust}</td>
+                      <td class="py-3.5 px-5 text-stone-600 max-w-xs">${itemsSummary}</td>
+                      <td class="py-3.5 px-5 font-black text-emerald-950">${Number(order.total).toLocaleString()} ETB</td>
+                      <td class="py-3.5 px-5">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${
+                          order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' :
+                          order.status === 'preparing' ? 'bg-blue-100 text-blue-800' : 
+                          order.status === 'completed' ? 'bg-stone-200 text-stone-800' : 'bg-amber-100 text-amber-800'
+                        }">${safeStatus}</span>
+                      </td>
+                      <td class="py-3.5 px-5 text-right">
+                        <div class="flex items-center justify-end gap-1.5">
+                          <button onclick="apiUpdateOrderStatus('${safeId}', 'preparing')" class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 font-bold text-[10px] hover:bg-blue-100">Prep</button>
+                          <button onclick="apiUpdateOrderStatus('${safeId}', 'ready')" class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-[10px] hover:bg-emerald-100">Ready</button>
+                          <button onclick="apiUpdateOrderStatus('${safeId}', 'completed')" class="px-2.5 py-1 rounded-lg bg-stone-100 text-stone-800 font-bold text-[10px] hover:bg-stone-200">Done</button>
+                        </div>
+                      </td>
+                    </tr>
+                  `;
+                }).join("")}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderWaiterCallsTab() {
+      const state = window.appState;
+      const calls = state.waiterCalls || [];
+
+      return `
+        <div class="max-w-3xl space-y-4">
+          <div class="space-y-3">
+            ${calls.map(call => {
+              const safeCallId = escapeHtml(call.id);
+              const safeTable = escapeHtml(call.table_number || call.table || '04');
+              const safeTime = escapeHtml(call.requested_at || call.time || 'Just now');
+
+              return `
+                <div class="bg-rose-50 border border-rose-200 rounded-3xl p-5 flex items-center justify-between shadow-xs">
+                  <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center font-black">
+                      <i data-lucide="bell-ring" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                      <h4 class="font-black text-stone-900 text-sm">TABLE ${safeTable} requested a waiter</h4>
+                      <p class="text-xs text-stone-500">Requested at ${safeTime}</p>
+                    </div>
+                  </div>
+                  <button onclick="handleResolveCall('${safeCallId}')" 
+                    class="bg-emerald-800 hover:bg-emerald-900 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-xs">
+                    Acknowledge & Clear
+                  </button>
+                </div>
+              `;
+            }).join("")}
+
+            ${calls.length === 0 ? `
+              <div class="bg-white rounded-3xl p-12 text-center border border-stone-200 text-stone-400">
+                <i data-lucide="check-check" class="w-12 h-12 mx-auto mb-2 text-emerald-600"></i>
+                <p class="text-xs font-bold text-stone-600">All tables are attended to. No pending assistance calls.</p>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderQRCodesTab() {
+      const tables = [1,2,3,4,5,6,7,8,9,10,11,12];
+
+      return `
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
+            ${tables.map(tNum => {
+              const numStr = tNum < 10 ? '0' + tNum : '' + tNum;
+              const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(window.location.origin + '/?table=' + numStr)}`;
+
+              return `
+                <div class="bg-white p-5 rounded-3xl border border-stone-200 text-center shadow-xs flex flex-col items-center">
+                  <span class="text-xs font-black text-stone-900 mb-2">TABLE ${numStr}</span>
+                  <div class="w-36 h-36 bg-stone-50 rounded-2xl p-2 border border-stone-200 mb-3 flex items-center justify-center">
+                    <img src="${qrUrl}" alt="QR Table ${numStr}" class="w-full h-full object-contain">
+                  </div>
+                  <p class="text-[10px] text-stone-400 font-bold uppercase mb-3">Gedaa Restaurant</p>
+                  <a href="${qrUrl}" download="Gedaa_Table_${numStr}_QR.png" class="text-emerald-700 text-xs font-bold hover:underline">
+                    Download PNG
+                  </a>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    async function handleResolveCall(callId) {
+      try {
+        await fetch(`/api/waiter-calls/${encodeURIComponent(callId)}/resolve`, { 
+          method: 'PATCH',
+          headers: getAdminHeaders()
+        });
+        await loadAdminBackendData();
+        renderAdminPage();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function triggerRefreshData() {
+      await loadAdminBackendData();
+      renderAdminPage();
+      showNotification("Database refreshed.", "info");
+    }
+
+    // Auto-refresh state every 8 seconds if authenticated
+    setInterval(async () => {
+      if (sessionStorage.getItem('gedaa_admin_token') && !document.getElementById('editDishModal') && !document.getElementById('addDishModal')) {
+        await loadAdminBackendData();
+        renderAdminPage();
+      }
+    }, 8000);
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const isAuth = await checkAdminAuth();
+      if (isAuth) {
+        await loadAdminBackendData();
+        renderAdminPage();
+      }
+    });
+  </script>
+</body>
+</html>

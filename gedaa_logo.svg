@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Shadow & Glow filters -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.25"/>
+    </filter>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="treeGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#0c3627"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Base Circle with Soft Shadow -->
+  <circle cx="250" cy="250" r="235" fill="#FAF7F2" filter="url(#shadow)"/>
+  
+  <!-- Outer Gold Rim -->
+  <circle cx="250" cy="250" r="230" fill="none" stroke="url(#goldGrad)" stroke-width="8"/>
+
+  <!-- Gadaa Flag Colors Concentric Rings (Gurraacha - Diimaa - Adii) -->
+  <!-- Top Arc: Black (Gurraacha) -->
+  <path d="M 50 250 A 200 200 0 0 1 450 250" fill="none" stroke="#111827" stroke-width="26" stroke-linecap="round"/>
+  
+  <!-- Mid Accents: Red (Diimaa) -->
+  <circle cx="250" cy="250" r="180" fill="none" stroke="#DC2626" stroke-width="14"/>
+
+  <!-- Inner Peace Ring: White / Cream (Adii) -->
+  <circle cx="250" cy="250" r="166" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="2"/>
+
+  <!-- Sacred Odaa (Sycamore Tree) - Symbol of Gadaa System -->
+  <g id="odaa-tree" transform="translate(0, 5)">
+    <!-- Tree Trunk & Roots -->
+    <path d="M 238 355 
+             C 238 300, 243 270, 225 240
+             C 220 230, 215 220, 205 210
+             C 215 220, 230 235, 236 245
+             C 245 230, 242 200, 238 185
+             C 245 198, 248 215, 250 230
+             C 252 215, 255 198, 262 185
+             C 258 200, 255 230, 264 245
+             C 270 235, 285 220, 295 210
+             C 285 220, 280 230, 275 240
+             C 257 270, 262 300, 262 355
+             C 275 362, 295 368, 310 372
+             C 285 368, 268 362, 250 360
+             C 232 362, 215 368, 190 372
+             C 205 368, 225 362, 238 355 Z" 
+          fill="#1F2937"/>
+
+    <!-- Sacred Odaa Canopy Foliage Clouds (Majestic Spreading Dome) -->
+    <!-- Center Main Canopy Dome -->
+    <path d="M 195 195 
+             C 180 170, 195 140, 220 135
+             C 230 115, 270 115, 280 135
+             C 305 140, 320 170, 305 195
+             C 325 210, 325 240, 305 255
+             C 310 270, 295 285, 275 280
+             C 260 290, 240 290, 225 280
+             C 205 285, 190 270, 195 255
+             C 175 240, 175 210, 195 195 Z" 
+          fill="url(#treeGrad)"/>
+
+    <!-- Left Canopy Wing -->
+    <path d="M 140 230 
+             C 125 210, 135 185, 160 180
+             C 170 165, 195 168, 205 185
+             C 215 200, 205 225, 190 235
+             C 195 250, 180 260, 165 255
+             C 150 260, 135 245, 140 230 Z" 
+          fill="#15803D" opacity="0.95"/>
+
+    <!-- Right Canopy Wing -->
+    <path d="M 360 230 
+             C 375 210, 365 185, 340 180
+             C 330 165, 305 168, 295 185
+             C 285 200, 295 225, 310 235
+             C 305 250, 320 260, 335 255
+             C 350 260, 365 245, 360 230 Z" 
+          fill="#15803D" opacity="0.95"/>
+
+    <!-- Decorative Gold Leaves Highlights -->
+    <circle cx="250" cy="155" r="7" fill="#FCD34D"/>
+    <circle cx="225" cy="175" r="6" fill="#FCD34D"/>
+    <circle cx="275" cy="175" r="6" fill="#FCD34D"/>
+    <circle cx="175" cy="210" r="5" fill="#FCD34D"/>
+    <circle cx="325" cy="210" r="5" fill="#FCD34D"/>
+    <circle cx="250" cy="205" r="8" fill="#FCD34D"/>
+  </g>
+
+  <!-- Lower Banner Arch: "GEDAA" -->
+  <path id="textArc" d="M 100 375 A 175 175 0 0 0 400 375" fill="none"/>
+  
+  <text font-family="'Plus Jakarta Sans', sans-serif" font-size="28" font-weight="900" fill="#111827" letter-spacing="6">
+    <textPath href="#textArc" startOffset="50%" text-anchor="middle">
+      GEDAA RESTAURANT
+    </textPath>
+  </text>
+
+  <!-- Star Emblems on lower rim -->
+  <polygon points="120,345 124,354 134,354 126,360 129,370 120,364 111,370 114,360 106,354 116,354" fill="#DC2626"/>
+  <polygon points="380,345 384,354 394,354 386,360 389,370 380,364 371,370 374,360 366,354 376,354" fill="#DC2626"/>
+</svg>

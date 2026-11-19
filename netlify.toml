@@ -1,0 +1,67 @@
+# ==============================================================================
+# NETLIFY DEPLOYMENT & SECURITY CONFIGURATION
+# GEDAA RESTAURANT - DIGITAL MENU & ADMIN PORTAL
+# ==============================================================================
+
+[build]
+  publish = "."
+
+# Global Security Headers applied to every asset and page served by Netlify
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), camera=(), microphone=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self' https: http:; frame-ancestors 'none';"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+
+# Clean URLs & Route Rewrites
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 200
+
+# Block direct access to local SQLite databases, scripts, batch launchers, and env files
+[[redirects]]
+  from = "/hotel_menu.db"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/server.py"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/START_SERVER.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/*.db"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/*.py"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/*.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/*.env"
+  to = "/404.html"
+  status = 404
+  force = true
