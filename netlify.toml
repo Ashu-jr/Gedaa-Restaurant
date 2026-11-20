@@ -23,6 +23,20 @@
   to = "/admin.html"
   status = 200
 
+# Proxy all API requests directly to the 24/7 Render Cloud Backend
+[[redirects]]
+  from = "/api/*"
+  to = "https://gedaa-restaurant.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+# Proxy uploaded food images to Render
+[[redirects]]
+  from = "/uploads/*"
+  to = "https://gedaa-restaurant.onrender.com/uploads/:splat"
+  status = 200
+  force = true
+
 # Block direct access to local SQLite databases, scripts, batch launchers, and env files
 [[redirects]]
   from = "/hotel_menu.db"
