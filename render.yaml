@@ -1,0 +1,19 @@
+# ==============================================================================
+# RENDER BLUEPRINT - GEDAA RESTAURANT BACKEND
+# Automatically deploys server.py on Render with 24/7 uptime
+# ==============================================================================
+
+services:
+  - type: web
+    name: gedaa-restaurant-api
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: "pip --version"
+    startCommand: "python server.py"
+    healthCheckPath: "/api/dishes"
+    envVars:
+      - key: GEDAA_ADMIN_PIN
+        value: "80401385"
+      - key: PYTHONUNBUFFERED
+        value: "1"

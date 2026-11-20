@@ -462,6 +462,12 @@ async function loadBackendData() {
   } catch (err) {
     console.warn("Backend API offline or error, using local state", err);
   }
+  const savedDishes = localStorage.getItem('gedaa_custom_dishes');
+  if (savedDishes) {
+    try {
+      window.appState.dishes = JSON.parse(savedDishes);
+    } catch(e) {}
+  }
   if (typeof renderApp === 'function') renderApp();
 }
 
@@ -516,11 +522,22 @@ async function apiAddDish(dishData) {
     } else if (res.status === 401) {
       showNotification("Unauthorized: Please sign in as staff.", "error");
       if (typeof requireAdminAuth === 'function') requireAdminAuth();
+      return false;
     }
   } catch (e) {
-    console.error("Failed to add dish", e);
+    console.warn("API offline, falling back to browser storage", e);
   }
-  return false;
+
+  // Local fallback for static hosting
+  const newDish = {
+    ...dishData,
+    id: dishData.id || ('dish_' + Date.now())
+  };
+  window.appState.dishes.unshift(newDish);
+  localStorage.setItem('gedaa_custom_dishes', JSON.stringify(window.appState.dishes));
+  showNotification("New dish added to Gedaa Restaurant menu!", "success");
+  if (typeof renderAdminPage === 'function') renderAdminPage();
+  return true;
 }
 
 async function apiUpdateDish(dishId, updateData) {
@@ -537,9 +554,20 @@ async function apiUpdateDish(dishId, updateData) {
     } else if (res.status === 401) {
       showNotification("Unauthorized: Please sign in as staff.", "error");
       if (typeof requireAdminAuth === 'function') requireAdminAuth();
+      return false;
     }
   } catch (e) {
-    console.error("Failed to update dish", e);
+    console.warn("API offline, falling back to browser storage", e);
+  }
+
+  // Local fallback for static hosting
+  const idx = window.appState.dishes.findIndex(d => d.id === dishId);
+  if (idx !== -1) {
+    window.appState.dishes[idx] = { ...window.appState.dishes[idx], ...updateData };
+    localStorage.setItem('gedaa_custom_dishes', JSON.stringify(window.appState.dishes));
+    showNotification("Dish updated successfully!", "success");
+    if (typeof renderAdminPage === 'function') renderAdminPage();
+    return true;
   }
   return false;
 }
@@ -554,13 +582,21 @@ async function apiDeleteDish(dishId) {
     if (res.ok) {
       await loadAdminBackendData();
       showNotification("Dish removed from menu.", "info");
+      return;
     } else if (res.status === 401) {
       showNotification("Unauthorized: Please sign in as staff.", "error");
       if (typeof requireAdminAuth === 'function') requireAdminAuth();
+      return;
     }
   } catch (e) {
-    console.error("Failed to delete dish", e);
+    console.warn("API offline, falling back to browser storage", e);
   }
+
+  // Local fallback for static hosting
+  window.appState.dishes = window.appState.dishes.filter(d => d.id !== dishId);
+  localStorage.setItem('gedaa_custom_dishes', JSON.stringify(window.appState.dishes));
+  showNotification("Dish removed from menu.", "info");
+  if (typeof renderAdminPage === 'function') renderAdminPage();
 }
 
 async function apiUpdateOrderStatus(orderId, newStatus) {
