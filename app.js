@@ -932,5 +932,12 @@ window.showNotification = showNotification;
 window.showOrderSuccessModal = showOrderSuccessModal;
 
 document.addEventListener("DOMContentLoaded", () => {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const tableParam = params.get('table');
+    if (tableParam) {
+      window.appState.tableNumber = String(tableParam).padStart(2, '0');
+    }
+  } catch(e) {}
   loadBackendData();
 });

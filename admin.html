@@ -1331,23 +1331,57 @@
 
     function renderQRCodesTab() {
       const tables = [1,2,3,4,5,6,7,8,9,10,11,12];
+      const liveBase = (window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1'))
+        ? 'https://gedaa-restaurant.netlify.app'
+        : window.location.origin;
 
       return `
-        <div class="space-y-4">
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
+        <div class="space-y-5">
+          <!-- QR Configuration Header -->
+          <div class="bg-white p-5 rounded-3xl border border-stone-200 shadow-xs flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="font-black text-stone-900 text-sm flex items-center gap-2">
+                <i data-lucide="qr-code" class="w-4 h-4 text-emerald-700"></i>
+                <span>Table QR Code Badges & Standees</span>
+              </h3>
+              <p class="text-xs text-stone-500 mt-0.5">
+                Each QR code is automatically configured with your live domain: 
+                <span class="font-mono font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">${liveBase}</span>
+              </p>
+            </div>
+
+            <button onclick="window.print()" class="px-5 py-2.5 rounded-xl bg-forest hover:bg-forest-dark text-white font-extrabold text-xs shadow-xs flex items-center gap-2">
+              <i data-lucide="printer" class="w-4 h-4"></i>
+              <span>Print All Table Stands</span>
+            </button>
+          </div>
+
+          <!-- Tables Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
             ${tables.map(tNum => {
               const numStr = tNum < 10 ? '0' + tNum : '' + tNum;
-              const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(window.location.origin + '/?table=' + numStr)}`;
+              const targetUrl = `${liveBase}/?table=${numStr}`;
+              const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(targetUrl)}&margin=8`;
 
               return `
-                <div class="bg-white p-5 rounded-3xl border border-stone-200 text-center shadow-xs flex flex-col items-center">
-                  <span class="text-xs font-black text-stone-900 mb-2">TABLE ${numStr}</span>
-                  <div class="w-36 h-36 bg-stone-50 rounded-2xl p-2 border border-stone-200 mb-3 flex items-center justify-center">
-                    <img src="${qrUrl}" alt="QR Table ${numStr}" class="w-full h-full object-contain">
+                <div class="bg-white p-5 rounded-3xl border border-stone-200 text-center shadow-xs flex flex-col items-center hover:shadow-md transition-shadow">
+                  <div class="w-10 h-10 rounded-2xl bg-forest p-1 mx-auto mb-2 border border-amber-400/50 flex items-center justify-center">
+                    <img src="gedaa_logo.svg" alt="Gedaa" class="w-full h-full object-contain">
                   </div>
-                  <p class="text-[10px] text-stone-400 font-bold uppercase mb-3">Gedaa Restaurant</p>
-                  <a href="${qrUrl}" download="Gedaa_Table_${numStr}_QR.png" class="text-emerald-700 text-xs font-bold hover:underline">
-                    Download PNG
+                  
+                  <span class="text-xs font-black text-stone-900 tracking-wider">TABLE ${numStr}</span>
+                  <span class="text-[10px] text-stone-400 font-bold mb-3">Gedaa Restaurant</span>
+                  
+                  <div class="w-40 h-40 bg-stone-50 rounded-2xl p-2.5 border-2 border-stone-100 mb-3 flex items-center justify-center shadow-inner">
+                    <img src="${qrImageUrl}" alt="QR Table ${numStr}" class="w-full h-full object-contain">
+                  </div>
+
+                  <p class="text-[10px] font-mono text-stone-400 truncate max-w-full mb-3" title="${targetUrl}">?table=${numStr}</p>
+
+                  <a href="${qrImageUrl}" target="_blank" download="Gedaa_Table_${numStr}_QR.png" 
+                    class="w-full py-2 rounded-xl bg-stone-100 hover:bg-emerald-800 hover:text-white text-stone-700 text-xs font-bold transition-colors flex items-center justify-center gap-1.5">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <span>Download PNG</span>
                   </a>
                 </div>
               `;
